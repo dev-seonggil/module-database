@@ -1,0 +1,96 @@
+spring:
+  datasource:
+    write:
+      pool-name: writer-pool  # Hikari 커넥션 풀 이름 (모니터링용)
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy  # 로그 찍기 위한 log4jdbc 드라이버
+      type: com.zaxxer.hikari.HikariDataSource  # HikariCP를 사용할 데이터소스 타입
+      jdbc-url: jdbc:log4jdbc:mysql://localhost:3306/celebe_db?useSSL=false&serverTimezone=Asia/Seoul  # log4jdbc를 통해 감싼 MySQL 연결 URL
+      username: master
+      password: master
+      # 풀 설정
+      maximum-pool-size: 5        # 동시에 최대 연결 수
+      minimum-idle: 5             # 최소 유지 커넥션 수
+      connection-timeout: 5000    # 풀에서 커넥션 가져올 때 최대 대기 시간(ms)
+      validation-timeout: 1000    # 커넥션 유효성 검사 타임아웃(ms)
+      max-lifetime: 1800000       # 커넥션 최대 수명(ms) — DB 설정보다 짧게!
+      data-source-properties:
+        connectTimeout: 10000          # DB 연결 시도 최대 대기 시간 (JDBC 드라이버 수준)
+        socketTimeout: 10000           # 쿼리 실행 후 결과 받을 때까지의 최대 대기 시간
+        useSSL: false                  # SSL 비활성화
+        allowMultiQueries: true       # 다중 쿼리 허용 (ex: SELECT ...; UPDATE ...)
+        autoReconnect: true           # 연결 끊김 시 자동 재시도
+        cachePrepStmts: true          # PreparedStatement 캐시 사용
+        prepStmtCacheSize: 500        # PreparedStatement 캐시 크기
+        prepStmtCacheSqlLimit: 2048   # 캐시할 SQL 문 최대 길이
+        useServerPrepStmts: true      # 서버 사이드 PreparedStatement 사용
+        useUnicode: true              # 유니코드 설정
+        characterEncoding: UTF-8      # 문자 인코딩
+        connectionCollation: utf8mb4_general_ci  # 연결 시 문자 정렬 방식
+        noAccessToProcedureBodies: true  # 프로시저 body 접근 권한 없을 때 에러 방지
+        useCompression: true          # 패킷 압축 활성화 (트래픽 줄임)
+        useLegacyDatetimeCode: false  # Date/Time 처리 방식 최신화
+        useTimezone: true             # 서버 타임존 사용
+        initializationFailTimeout: 0  # 초기 연결 실패 시 빠르게 실패 처리
+    read:
+      pool-name: reader-pool
+      driver-class-name: com.mysql.cj.jdbc.Driver  # 일반 MySQL 드라이버
+      type: com.zaxxer.hikari.HikariDataSource
+      jdbc-url: jdbc:mysql://localhost:3306/celebe_db?useSSL=false&serverTimezone=Asia/Seoul
+      username: master
+      password: master
+      maximum-pool-size: 5
+      minimum-idle: 5
+      connection-timeout: 5000
+      validation-timeout: 1000
+      max-lifetime: 1800000
+      data-source-properties:
+        connectTimeout: 10000
+        socketTimeout: 10000
+        useSSL: false
+        allowMultiQueries: true
+        autoReconnect: true
+        cachePrepStmts: true
+        prepStmtCacheSize: 500
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useUnicode: true
+        characterEncoding: UTF-8
+        connectionCollation: utf8mb4_general_ci
+        noAccessToProcedureBodies: true
+        useCompression: true
+        useLegacyDatetimeCode: false
+        useTimezone: true
+        initializationFailTimeout: 0
+  ################################
+  ## Spring JPA Setting
+  ################################
+  jpa:
+    #    show-sql: false
+    #    database-platform: org.hibernate.dialect.MySQLDialect
+    #    hibernate:
+    #      ddl-auto: none
+    #      naming:
+    #        physical-strategy: io.celebe.common.hibernate.CustomPhysicalNamingStrategy
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+        ddl-auto: none
+        use_sql_comments: true
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions: true
+        query:
+          in_clause_parameter_padding: true
+        connection:
+          provider_disables_autocommit: true
+          enable_lazy_load_no_trans: true
+          dialect:
+            storage_engine: innodb
+        cache:
+          use_second_level: false
+          use_query_cache: false
+        default_batch_fetch_size: 200
+        show_sql: true
+    database: mysql

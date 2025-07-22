@@ -28,39 +28,34 @@ subprojects { subproject ->
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
 
-    configurations {
-        all {
-            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-        }
+    configurations.configureEach {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
     }
 
-    plugins.withType(JavaPlugin) {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-
-        compileJava {
-            options.encoding = 'UTF-8'
-            options.compilerArgs << "-Xlint"
+    pluginManager.withPlugin("java") {
+        // Java 버전 설정
+        java {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
 
-        idea {
-            module {
-                outputDir = file("$buildDir/classes/main/")
-                testOutputDir file("$buildDir/classes/test")
-                downloadSources = true
-            }
+        // compileJava 태스크 설정
+        tasks.named("compileJava").configure {
+            options.encoding = "UTF-8"
+            options.compilerArgs.add("-Xlint")
         }
 
-        test {
+        // test 태스크 설정
+        tasks.named("test").configure {
             useJUnitPlatform()
         }
 
+        // 의존성 설정
         dependencies {
             implementation("io.netty:netty-resolver-dns-native-macos:4.1.82.Final:osx-aarch_64")
-            implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+            implementation("org.springframework.boot:spring-boot-starter-log4j2")
 
             compileOnly("org.projectlombok:lombok")
-
             annotationProcessor("org.projectlombok:lombok")
         }
     }
