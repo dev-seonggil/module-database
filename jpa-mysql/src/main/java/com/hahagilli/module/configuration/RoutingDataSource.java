@@ -7,9 +7,9 @@ public class RoutingDataSource extends AbstractRoutingDataSource {
 
     @Override
     protected Object determineCurrentLookupKey() {
-        boolean active = TransactionSynchronizationManager.isActualTransactionActive();
-        boolean write = active && !TransactionSynchronizationManager.isCurrentTransactionReadOnly();
+        boolean transactionActive = TransactionSynchronizationManager.isActualTransactionActive();
+        boolean readOnly = transactionActive && TransactionSynchronizationManager.isCurrentTransactionReadOnly();
 
-        return write ? "write" : "read";
+        return readOnly ? "read" : "write";
     }
 }
